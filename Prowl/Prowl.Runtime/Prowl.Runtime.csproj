@@ -1,0 +1,62 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+	  <TargetType>library</TargetType>
+    <ImplicitUsings>disable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <NoWarn>8600;8601;8618;8602;8603;8604;8625;1591</NoWarn>
+    <IsAotCompatible>true</IsAotCompatible>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+  </PropertyGroup>
+
+  <!-- Allow test project to access internal members -->
+  <ItemGroup>
+    <InternalsVisibleTo Include="Prowl.Runtime.Test" />
+    <InternalsVisibleTo Include="Prowl.Editor" />
+  </ItemGroup>
+
+  <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
+    <OutputPath>../Build/Runtime/Debug/</OutputPath>
+  </PropertyGroup>
+
+  <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
+    <OutputPath>../Build/Runtime/Release/</OutputPath>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- <PackageReference Include="Jitter2" Version="2.2.0" /> -->
+    <PackageReference Include="Jitter2" Version="2.7.3" />
+    <PackageReference Include="Magick.NET-Q16-AnyCPU" Version="14.9.1" />
+    <PackageReference Include="Prowl.Echo" Version="2.0.0" />
+    <PackageReference Include="Prowl.Paper" Version="1.0.1" />
+    <PackageReference Include="Silk.NET" Version="2.22.0" />
+    <PackageReference Include="Silk.NET.Assimp" Version="2.22.0" />
+    <PackageReference Include="Silk.NET.OpenAL.Soft.Native" Version="1.23.1" />
+    <!-- <PackageReference Include="Silk.NET.OpenAL.Soft.Native" Version="1.23.1" /> -->
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="Assets\Defaults\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <LibraryFiles Include="..\Libraries\**\*.*" />
+  </ItemGroup>
+
+  <!-- Copy native libraries to output -->
+  <Target Name="CopyLibraries" AfterTargets="Build">
+    <Copy SourceFiles="@(LibraryFiles)" DestinationFiles="@(LibraryFiles->'$(OutputPath)runtimes\%(RecursiveDir)%(Filename)%(Extension)')" />
+  </Target>
+
+  <!-- Collect runtime files for referencing projects -->
+  <ItemGroup>
+    <None Include="..\Libraries\**\*.*">
+      <Link>runtimes\%(RecursiveDir)%(Filename)%(Extension)</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Visible>false</Visible>
+    </None>
+  </ItemGroup>
+
+</Project>
